@@ -67,4 +67,9 @@ Only decisions evidenced in current code/documentation are recorded here. The re
 - **Alternatives considered:** Omitting GitHub templates or CI workflow was rejected because automated CI and clear contribution contracts are foundational to production maintainability.
 - **Consequences:** All PRs and commits are validated by automated CI matching local commands (`uv sync --frozen`, `ruff check`, `ruff format --check`, `pytest`). Security guidelines and cross-agent instruction layers are clearly partitioned.
 
+## D-010 — Implement explicit domain schema layer with Pydantic v2 and PyMongo alias compatibility
 
+- **Decision:** Implement domain schema models in `backend/src/backend/models/` for users (`user.py`), documents (`document.py`), and audit logs (`audit.py`) using Pydantic v2, `email-validator` for `EmailStr`, `ConfigDict(populate_by_name=True)`, string-backed enums (`UserRole`, `AuditAction`), and `_id` alias mappings.
+- **Reason:** Separating `Create`, `Update`, `InDB`, and `Response` representations prevents sensitive fields (such as `hashed_password`) from leaking into API output while ensuring type safety, request validation, and clean serialization with MongoDB.
+- **Alternatives considered:** Using raw dicts or an ORM/ODM like Beanie was considered; rejected to preserve lightweight direct async PyMongo patterns and avoid unnecessary runtime overhead.
+- **Consequences:** All incoming requests, database persistence layers, and API response serializers use validated Pydantic schemas. 19 unit tests verify validation rules, defaults, and serialization behavior.

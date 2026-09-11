@@ -19,19 +19,22 @@
 - [x] Add GitHub Actions CI workflow in `.github/workflows/ci.yml` running real stack verification (`setup-uv`, Python 3.14, `uv sync --frozen`, `ruff check`, `ruff format --check`, `pytest`).
 
 
+- [x] Complete Phase 1 domain and data schema models (`backend/src/backend/models/user.py`, `document.py`, `audit.py`) with Pydantic v2 validation, RBAC role enums, PyMongo alias mappings, and unit tests (`test_models.py`, 19 tests total passing).
+
 ## In progress
 
-- [ ] Phase 1: Domain and data design (defining documents/knowledge items, user identity, roles, permissions, audit events, and collection/indexing strategy).
+- [ ] Phase 2: Identity and authentication implementation (password hashing, JWT issuance/validation, security dependencies).
 
 ## Blocked
 
-- None. Previously recorded Atlas connection blocker and local tool cache issues are resolved.
+- None.
 
 ## Next
 
-- [ ] Define the first domain schema and authorization contract before adding routes. At minimum, explicitly choose identity source, role/permission model, document visibility model, audit-event fields, indexes, and migration strategy.
-- [ ] Implement authentication and server-side authorization from an approved design.
-- [ ] Implement document/knowledge data model, persistence, validation, and indexes.
+- [ ] Add password hashing (`pwdlib`/`bcrypt` or `argon2`) and JWT utility (`pyjwt`) to `backend/`.
+- [ ] Implement auth routes (`/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/me`).
+- [ ] Implement FastAPI security dependencies (`get_current_user`, `require_role`).
+- [ ] Implement document/knowledge data persistence, CRUD endpoints, and role-based filtering (Phase 3).
 
 ## Future
 

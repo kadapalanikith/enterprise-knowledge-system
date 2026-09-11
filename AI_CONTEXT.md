@@ -72,11 +72,11 @@ Consequently, the app will not complete startup if MongoDB is unavailable; `/hea
 **UNKNOWN / not implemented.** `frontend/` exists but is empty. No frontend stack, routes, build command, API client, pages, or authentication UI has been selected in tracked code.
 
 ## Database design
-
-- Database name: `enterprise_knowledge_system` (`backend/src/backend/database.py`).
-- Collections: **none defined or created in code**.
-- Models/schemas/indexes/migrations/seed data: **none implemented**.
-- Planned collections such as users, roles, documents, permissions, and audit events are **TODO**, not current schema commitments.
+ 
+ - Database name: `enterprise_knowledge_system` (`backend/src/backend/database.py`).
+ - Collections: `users`, `documents`, `audit_logs`.
+ - Models/schemas: Implemented in `backend/src/backend/models/` (`user.py`, `document.py`, `audit.py`) with Pydantic v2 schemas (`Create`, `Update`, `InDB`, `Response`).
+ - Indexes/migrations: Initial collections designed; indexing strategy will be applied during Phase 2/3 endpoints.
 
 ## Authentication and authorization
 

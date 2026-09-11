@@ -24,42 +24,38 @@ This is an early-stage **Enterprise Knowledge System**. Its stated goal is to le
 
 ## Most recent work
 
-- Added `AGENTS.md` persistent cross-agent instruction layer.
-- Completed production repository engineering audit (D-009): added root `.gitignore`, `backend/.env.example`, `LICENSE` (Apache 2.0), `SECURITY.md`, `CONTRIBUTING.md`, GitHub PR and issue templates, and `.github/instructions/backend.instructions.md`.
-- Added GitHub Actions CI workflow in `.github/workflows/ci.yml` running real stack verification (`setup-uv`, Python 3.14, `uv sync --frozen`, `ruff check`, `ruff format --check`, `pytest`).
-- Added `backend/tests/test_init.py`, bringing test suite to 12 unit tests with 100% passing results and full source coverage.
+- Added `backend/src/backend/models/user.py`, `document.py`, and `audit.py` defining domain schemas, role enums (`UserRole`), audit actions (`AuditAction`), and Pydantic v2 validation.
+- Added `email-validator` dependency for `EmailStr` RFC validation.
+- Added `backend/tests/test_models.py`, bringing test suite to 19 unit tests with 100% passing results and full coverage.
+- Formatted and linted all files with Ruff.
 
 ## Exact current blocker
 
-**None.** Atlas connectivity, local tools, and CI configuration are established and verified.
+**None.** Foundation and domain models are verified.
 
 ## What was tested
 
 - `uv run ruff check .` — passed (0 errors).
-- `uv run ruff format --check .` — passed (11 files checked, 0 unformatted).
-- `uv run pytest` — 12 passed in 0.72s (0 failures, 0 warnings).
-- Bounded MongoDB Atlas ping (`{'ok': 1}`) and live application lifespan context enter/exit — passed.
+- `uv run ruff format --check .` — passed (15 files checked, 0 unformatted).
+- `uv run pytest` — 19 passed in 0.62s (0 failures, 0 warnings).
 
 
 ## Do not change these assumptions without an explicit design decision
 
-- Do not claim existing authentication, RBAC, auditing, documents, search, or frontend functionality; none exists.
 - Do not expose or commit `MONGO_URI`, credentials, tokens, passwords, or `backend/.env`.
-- Preserve the current async FastAPI + async PyMongo + Pydantic Settings + uv foundation unless there is a deliberate replacement decision.
-- Preserve database name `enterprise_knowledge_system` unless a migration plan is documented.
-- Do not build product features until database connectivity and the authorization/data design are defined.
+- Preserve the current async FastAPI + async PyMongo + Pydantic Settings + uv foundation.
+- Keep domain models separated into `Create`, `Update`, `InDB`, and `Response` schemas to avoid credential leaks.
 
 ## Immediate next task
 
-Phase 1 — Domain and data design: Define the domain schema, collection and index strategy, identity source, authorization rules (roles and permissions), and audit-event model before adding business routes.
+Phase 2 — Identity and authentication: Add password hashing, JWT creation/verification, security dependencies (`get_current_user`, `require_role`), and authentication endpoints.
 
 ## Recommended remaining-work order
 
-1. Define the domain schema, collection/index strategy, identity source, authorization rules, and audit-event model (Phase 1).
-2. Implement authentication and server-side authorization with tests (Phase 2).
-3. Implement protected knowledge/document workflows and discovery/search with authorization filtering (Phase 3).
-4. Choose and build the frontend against stable protected API contracts (Phase 4).
-5. Add CI, deployment configuration, monitoring, secret management, and production security hardening (Phase 5).
+1. Implement authentication and server-side authorization with tests (Phase 2).
+2. Implement protected knowledge/document workflows and discovery/search with authorization filtering (Phase 3).
+3. Choose and build the frontend against stable protected API contracts (Phase 4).
+4. Add CI, deployment configuration, monitoring, secret management, and production security hardening (Phase 5).
 
 ## Inspect these files first
 
