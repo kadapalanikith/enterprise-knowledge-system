@@ -2,28 +2,31 @@
 
 ## Completed
 
-- [x] Create the Python 3.14 / uv backend project in `backend/`.
-- [x] Add FastAPI application and `GET /health` in `backend/src/backend/main.py`.
-- [x] Add Pydantic Settings-based `MONGO_URI` configuration in `backend/src/backend/config.py`.
-- [x] Add async PyMongo client and `enterprise_knowledge_system` database handle in `backend/src/backend/database.py`.
-- [x] Ping MongoDB during FastAPI startup and close the client at shutdown.
-- [x] Add runtime dependencies and development dependencies (pytest, Ruff).
-- [x] Audit and create migration handoff documentation: `AI_CONTEXT.md`, `PROJECT_PLAN.md`, `TASKS.md`, `DECISIONS.md`, and updated root `README.md`.
-- [x] Run `ruff check .` via the existing `backend/.venv`; it passed on 2026-09-11.
-- [x] Verify MongoDB Atlas reachability: bounded 5-second ping completed successfully with `{'ok': 1}` without disclosing credentials; verified app lifespan startup/shutdown against Atlas.
-- [x] Resolve test runner warnings and configure pytest in `backend/pyproject.toml` (`pythonpath = ["src"]`, `addopts = "-p no:cacheprovider"`).
-- [x] Establish and document health semantics (D-008): retain startup-gated lifespan DB ping and `/health` returning `{"status": "ok"}`.
-- [x] Add foundation test suite in `backend/tests/` covering `Settings`, database client/handle, lifespan startup/shutdown and error handling, and `GET /health`.
-- [x] Add `AGENTS.md` as cross-agent persistent instruction layer.
-- [x] Complete production engineering audit (D-009): add root `.gitignore`, `backend/.env.example`, `LICENSE` (Apache 2.0), `SECURITY.md`, `CONTRIBUTING.md`, GitHub PR and issue templates, `.github/instructions/backend.instructions.md`, and test `test_init.py` (12 tests total, all passing).
-- [x] Add GitHub Actions CI workflow in `.github/workflows/ci.yml` running real stack verification (`setup-uv`, Python 3.14, `uv sync --frozen`, `ruff check`, `ruff format --check`, `pytest`).
-
-
-- [x] Complete Phase 1 domain and data schema models (`backend/src/backend/models/user.py`, `document.py`, `audit.py`) with Pydantic v2 validation, RBAC role enums, PyMongo alias mappings, and unit tests (`test_models.py`, 19 tests total passing).
+- [x] Create Python 3.14 / uv backend project — **SUPERSEDED by D-010 migration**.
+- [x] Establish all Python-era foundation (FastAPI, PyMongo, Pydantic models, pytest, Ruff, CI) — **SUPERSEDED by D-010 migration**.
+- [x] **D-010 migration**: Delete entire Python backend and rebuild in plain JavaScript.
+  - [x] Remove Python source, tests, pyproject.toml, uv.lock, requirements.txt, .python-version.
+  - [x] Scaffold `backend/` as npm project (package.json, .gitignore, .env.example).
+  - [x] `backend/src/config.js` — fail-fast env config (MONGO_URI required, PORT default 8000).
+  - [x] `backend/src/database.js` — Mongoose `connectDB()` / `disconnectDB()`.
+  - [x] `backend/src/app.js` — Express app factory (exported, no listen).
+  - [x] `backend/src/routes/health.js` — `GET /health` → `{ status: "ok" }`.
+  - [x] `backend/src/index.js` — entry point: connectDB then app.listen.
+  - [x] `backend/src/models/user.js` — User Mongoose schema + ROLES enum (viewer/editor/admin).
+  - [x] `backend/src/models/document.js` — Document Mongoose schema with allowedRoles.
+  - [x] `backend/src/models/auditLog.js` — AuditLog Mongoose schema.
+  - [x] `backend/eslint.config.mjs` — ESLint flat config (0 errors, 0 warnings).
+  - [x] `backend/tests/config.test.js` — 4 tests (fail-fast, env loading, port default).
+  - [x] `backend/tests/database.test.js` — 3 tests (mocked Mongoose connect/disconnect).
+  - [x] `backend/tests/health.test.js` — 3 tests (supertest GET /health).
+  - [x] `backend/tests/models.test.js` — 17 tests (User, Document, AuditLog validation).
+  - [x] **27/27 Jest tests passing**, ESLint clean.
+  - [x] Update `.github/workflows/ci.yml` for Node.js 20 / npm ci / ESLint / Jest.
+  - [x] Update all project docs (AI_CONTEXT.md, TASKS.md, DECISIONS.md, HANDOFF.md, README.md).
 
 ## In progress
 
-- [ ] Phase 2: Identity and authentication implementation (password hashing, JWT issuance/validation, security dependencies).
+- [ ] Phase 2: Identity and authentication (password hashing, JWT issuance/validation, auth routes).
 
 ## Blocked
 
@@ -31,21 +34,21 @@
 
 ## Next
 
-- [ ] Add password hashing (`pwdlib`/`bcrypt` or `argon2`) and JWT utility (`pyjwt`) to `backend/`.
-- [ ] Implement auth routes (`/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/me`).
-- [ ] Implement FastAPI security dependencies (`get_current_user`, `require_role`).
-- [ ] Implement document/knowledge data persistence, CRUD endpoints, and role-based filtering (Phase 3).
+- [ ] Add `bcryptjs` and `jsonwebtoken` to `backend/`.
+- [ ] Implement auth routes: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `GET /api/v1/auth/me`.
+- [ ] Implement Express middleware: `authenticateToken`, `requireRole(role)`.
+- [ ] Add Jest tests for auth utilities and routes.
 
 ## Future
 
-- [ ] Implement auditable access events.
-- [ ] Implement protected knowledge discovery/retrieval APIs.
+- [ ] Implement document/knowledge CRUD endpoints with role-based filtering (Phase 3).
+- [ ] Implement auditable access events (Phase 4).
 - [ ] Select and implement a frontend in `frontend/` only after backend contracts are defined.
-- [ ] Add CI, deployment configuration, secret management, monitoring, and security hardening.
+- [ ] Add deployment configuration, secret management, monitoring, and security hardening (Phase 5).
 
 ## Continuation notes
 
-- Tested foundation is established with 11 automated unit tests (`uv run pytest` or `python -m pytest`).
-- `MONGO_URI` is required. Use `MONGO_URI=...` in a recreated `.env`; do not commit it.
-- Atlas connectivity has been verified live and via unit mocks. Next work should proceed with Phase 1 domain and authorization design.
-
+- Backend is now **plain JavaScript / Express.js / Mongoose / Jest / ESLint**.
+- Run `npm install` once in `backend/`, then `npm test` and `npx eslint src/`.
+- `MONGO_URI` is required. Copy `.env.example` to `.env` and fill in the connection string.
+- 27 Jest tests pass. CI updated for Node.js 20.

@@ -24,10 +24,11 @@ Documentation in this repository represents the shared persistent memory across 
 1. **Code is the source of truth**: Verify claims against actual code. Never overwrite project memory with assumptions.
 2. **Zero secret leakage**: Never log, commit, or write connection strings, passwords, API keys, or `.env` content into documentation or source files.
 3. **Preserve established architecture**:
-   - Python 3.14+, FastAPI, asynchronous PyMongo (`AsyncMongoClient`), Pydantic Settings, `uv`.
-   - Single database named `enterprise_knowledge_system`.
-   - Fail-fast startup database reachability check in app `lifespan`.
-   - Pytest cache isolation: `-p no:cacheprovider` in `backend/pyproject.toml`.
+   - Node.js (plain JavaScript, CommonJS), Express.js, Mongoose, dotenv, `npm`.
+   - Single database named `enterprise_knowledge_system` (Mongoose `dbName` option).
+   - Fail-fast startup: `connectDB()` throws → `index.js` exits with code 1 if DB unreachable.
+   - Jest with `--forceExit` in `package.json` test script.
+   - ESLint flat config in `backend/eslint.config.mjs` (no `.eslintrc` files).
 4. **Proportional updates**: Do not spend entire sessions editing documentation. Keep updates crisp and proportional to code changes.
 5. **No unauthenticated/unprotected features**: All knowledge access and administrative operations must enforce explicit permissions once Phase 1 & 2 are in place.
 
@@ -36,16 +37,10 @@ Documentation in this repository represents the shared persistent memory across 
 Execute from `backend/`:
 
 ```powershell
-uv run pytest
-uv run ruff check .
-uv run uvicorn backend.main:app --reload
-```
-
-Direct virtual environment alternatives:
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest
-.\.venv\Scripts\python.exe -m ruff check .
+npm install
+npm test
+npx eslint src/
+npm start
 ```
 
 ## End-of-Task Protocol

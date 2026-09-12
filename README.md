@@ -1,75 +1,79 @@
 # Enterprise Knowledge System
 
-An early-stage, permission-aware enterprise knowledge-system backend. Its intended purpose is to let employees find internal knowledge while enforcing role-based access to sensitive documents and maintaining an auditable record of access. The repository currently contains only the backend foundation; no application features, document model, authentication, authorization enforcement, audit trail, or frontend have been implemented.
-
-For the complete, code-grounded handoff, read [AI_CONTEXT.md](AI_CONTEXT.md). The current work tracker is [TASKS.md](TASKS.md), and recorded decisions are in [DECISIONS.md](DECISIONS.md).
+A permission-aware enterprise knowledge system — secure discovery of internal knowledge with role-based access control and an auditable trail. Currently in **Phase 1 (foundation complete)**.
 
 ## Stack
 
-- Python 3.14
-- FastAPI
-- PyMongo asynchronous client (`AsyncMongoClient`)
-- MongoDB / MongoDB Atlas (intended persistence)
-- Pydantic Settings
-- Uvicorn
-- uv for dependency and environment management
+| Area | Technology |
+|---|---|
+| Runtime | Node.js (plain JavaScript) |
+| Framework | Express.js |
+| Database | MongoDB Atlas via Mongoose |
+| Testing | Jest + supertest |
+| Linting | ESLint (flat config) |
+| CI | GitHub Actions (Node.js 20) |
 
-## Repository layout
+## Prerequisites
 
-```text
-backend/                 FastAPI service and its Python project
-  src/backend/main.py    application and /health endpoint
-  src/backend/config.py  environment-backed settings
-  src/backend/database.py MongoDB client and database handle
-frontend/                empty placeholder for a future web interface
-```
+- Node.js 20+
+- npm
+- A MongoDB Atlas cluster (or local MongoDB instance)
 
 ## Setup
 
-Prerequisites: Python 3.14+ and [uv](https://docs.astral.sh/uv/).
-
 ```powershell
+# 1. Clone the repo
+git clone <repo-url>
+cd enterprise-knowledge-system
+
+# 2. Install backend dependencies
 cd backend
-uv sync
+npm install
+
+# 3. Configure environment
+copy .env.example .env
+# Edit .env and set MONGO_URI to your MongoDB connection string
 ```
 
-Create `backend/.env` with a MongoDB connection string. Use this portable form (do not commit the file):
-
-```env
-MONGO_URI=your-mongodb-connection-string
-```
-
-`MONGO_URI` is required by `backend/src/backend/config.py`. The existing local `.env` is ignored by Git and contains a value using space-separated rather than equals-separated syntax; it is parsed in the current environment, but equals syntax is the recommended form for a new setup.
-
-## Run
-
-From `backend/`:
+## Running the server
 
 ```powershell
-uv run uvicorn backend.main:app --reload
+# From backend/
+npm start           # production start
+npm run dev         # development mode with auto-reload (nodemon)
 ```
 
-The API documentation is at `http://127.0.0.1:8000/docs`. The only current endpoint is `GET /health`, which returns `{"status":"ok"}` only after the application lifespan successfully pings MongoDB at startup.
+The server starts on port 8000 by default (set `PORT` in `.env` to override).
 
-There is no frontend to run yet.
+## API
 
-## Database setup and verified Atlas connectivity
+| Method | Path | Description |
+|---|---|---|
+| GET | `/health` | Returns `{"status":"ok"}` when the server is up and DB is connected |
 
-The service creates an asynchronous MongoDB client from `MONGO_URI` and selects the `enterprise_knowledge_system` database. It creates no collections, indexes, or seed data.
-
-Database connectivity against MongoDB Atlas has been verified with a bounded ping (`{'ok': 1}`). App lifespan startup and shutdown were verified live against Atlas. Never commit or disclose credentials or connection strings in documentation or version control.
-
-## Testing and quality checks
+## Testing & Linting
 
 ```powershell
-cd backend
-uv run pytest
-uv run ruff check .
+# From backend/
+npm test            # run Jest test suite (27 tests)
+npx eslint src/     # lint check
 ```
 
-A foundation test suite of 11 automated unit tests is located in `backend/tests/` covering settings validation, database handles, lifespan startup/shutdown lifecycle and failure handling, and `/health`. Pytest is configured in `pyproject.toml` with `-p no:cacheprovider` to run cleanly across environments. Ruff checks pass with 0 errors.
+## Project documentation
 
-## Current status
+| File | Purpose |
+|---|---|
+| `AI_CONTEXT.md` | Detailed technical context for AI agents |
+| `TASKS.md` | Task tracker |
+| `DECISIONS.md` | Architectural decisions (D-001 to D-011) |
+| `HANDOFF.md` | Operational handoff for session continuation |
+| `PROJECT_PLAN.md` | Roadmap and phase milestones |
+| `AGENTS.md` | Persistent instructions for all AI coding agents |
 
-Phase 0 foundation stabilization is complete. The FastAPI/MongoDB startup lifecycle, configuration object, database handle, and automated tests are in place. The next phase is Phase 1 (Domain and data design). See [PROJECT_PLAN.md](PROJECT_PLAN.md) and [TASKS.md](TASKS.md).
+## Roadmap
 
+- **Phase 1 ✅** — Backend foundation (Express, Mongoose, health endpoint, models, tests)
+- **Phase 2** — Authentication (bcryptjs + JWT, register/login/me endpoints, role middleware)
+- **Phase 3** — Knowledge/document CRUD with RBAC filtering
+- **Phase 4** — Audit event persistence
+- **Phase 5** — Frontend, deployment, monitoring, hardening
