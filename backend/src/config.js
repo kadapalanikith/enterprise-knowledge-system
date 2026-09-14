@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const mongoUri = process.env.MONGO_URI;
 const port = parseInt(process.env.PORT, 10) || 8000;
+const jwtSecret = process.env.JWT_SECRET || 'super-secret-dev-key';
 
 if (!mongoUri) {
   throw new Error(
@@ -12,4 +13,4 @@ if (!mongoUri) {
   );
 }
 
-module.exports = { mongoUri, port };
+module.exports = { mongoUri, port, jwtSecret };

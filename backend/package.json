@@ -10,8 +10,10 @@
     "lint": "eslint src/"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.5.1"
   },
   "devDependencies": {
